@@ -48,7 +48,7 @@ func eventDispatch(event string, obj *js.Object) {
 		if evtCb == nil {
 			eventCallbacks[event] = &callbacks{}
 		}
-		for k, v := range *evtCb {
+		for _, v := range *evtCb {
 			v.Invoke(obj)
 		}
 	}
