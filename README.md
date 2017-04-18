@@ -55,7 +55,10 @@ The flag `--reinstall` instructs the installer to remove pre-existing bootstrap.
 
 The installer is designed to operate as safely as possible.
 
-It will not install to your installation if it detects a 
+It will not install to your installation if it detects a backup file in it's folder, assuming that this means that the bootstrap.js file is already installed.
+
+If you already installed the bootstrap.js file, you can use `--only-mods` to update
+the core libraries.
 
 ## Function
 
