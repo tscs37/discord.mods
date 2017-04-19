@@ -25,6 +25,7 @@ function install_24hstamps() {
     };
     dmodsNS.onEvent("24hourstamps", "newMessage", convert);
     dmodsNS.onEvent("24hourstamps", "channelSwitch", convert);
+    convert();
 }
 
 dmodsNS.loadFinishedCallbackRegister(install_24hstamps);
