@@ -2,20 +2,14 @@ package main
 
 import (
 	"encoding/base64"
-	"errors"
+	"github.com/pkg/errors"
+	"go.rls.moe/misc/discord.mods/common"
 	"golang.org/x/crypto/ed25519"
 	"gopkg.in/vmihailenco/msgpack.v2"
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
 	"strings"
-)
-
-const (
-	baseFolder   = "/.discord.mods"
-	configFile   = "/config.bin"
-	modFolder    = "/mods"
-	modExtension = ".dmod"
 )
 
 type config struct {
@@ -43,15 +37,23 @@ type evalOptions struct {
 type key ed25519.PublicKey
 
 func loadConfig() (*config, error) {
-	base := getBase()
-	if !dirExists(base) {
-		mkdirPath(base, 0700)
-	}
-	cStr, err := getFile(filepath.Join(base, configFile))
+	base, err := common.GetBase()
 	if err != nil {
 		return nil, err
 	}
-	cRaw, err := base64.RawStdEncoding.DecodeString(cStr)
+	if exists, err := common.Exists(base); !exists && err == nil {
+		err := common.Mkdir(base, 0700)
+		if err != nil {
+			return nil, err
+		}
+	} else if err != nil {
+		return nil, err
+	}
+	cStr, err := common.GetFile(filepath.Join(base, common.ConfigFile))
+	if err != nil {
+		return nil, err
+	}
+	cRaw, err := base64.RawStdEncoding.DecodeString(string(cStr))
 	if err != nil {
 		return nil, err
 	}
@@ -64,11 +66,16 @@ func loadConfig() (*config, error) {
 }
 
 func loadMod(modname string) (*mod, error) {
-	base := getBase()
-	if !dirExists(filepath.Join(base, modFolder)) {
-		return nil, errors.New("Mod folder does not exist, check your setup")
+	base, err := common.GetBase()
+	if err != nil {
+		return nil, err
 	}
-	cStr, err := getFile(filepath.Join(base, modFolder, modname))
+	if exists, err := common.Exists(filepath.Join(base, common.ModFolder)); !exists && err == nil {
+		return nil, errors.New("Mod folder does not exist, check your setup")
+	} else if err != nil {
+		return nil, errors.Wrap(err, "Could not check if path exists")
+	}
+	cStr, err := common.GetFile(filepath.Join(base, common.ModFolder, modname))
 	if err != nil {
 		return nil, err
 	}
@@ -79,12 +86,16 @@ func loadMod(modname string) (*mod, error) {
 	if err != nil {
 		return nil, err
 	}
-	mod.baseDir = strings.TrimSuffix(filepath.Join(base, modFolder, modname), ".dmod")
+	mod.baseDir = strings.TrimSuffix(filepath.Join(base, common.ModFolder, modname), ".dmod")
 	mod.baseName = modname
 	return mod, nil
 }
 
 func saveConfig(c *config) error {
+	base, err := common.GetBase()
+	if err != nil {
+		return err
+	}
 	cRaw, err := msgpack.Marshal(c)
 	if err != nil {
 		return err
@@ -94,24 +105,27 @@ func saveConfig(c *config) error {
 		return errors.New("HOME path not set")
 	}
 	cStr := base64.RawStdEncoding.EncodeToString(cRaw)
-	writeFile(filepath.Join(getBase(), configFile), cStr, 0600)
-	return nil
+	return common.WriteFile(filepath.Join(base, common.ConfigFile), []byte(cStr), 0600)
 }
 
 func listMods() ([]string, error) {
-	base := getBase()
-
-	if !dirExists(filepath.Join(base, modFolder)) {
-		mkdirPath(filepath.Join(base, modFolder), 0700)
-		return []string{}, nil
+	base, err := common.GetBase()
+	if err != nil {
+		return nil, err
 	}
-	files, err := lsDir(filepath.Join(base, modFolder))
+
+	if exists, err := common.Exists(filepath.Join(base, common.ModFolder)); err != nil {
+		return nil, err
+	} else if !exists {
+		return []string{}, common.Mkdir(filepath.Join(base, common.ModFolder), 0700)
+	}
+	files, err := lsDir(filepath.Join(base, common.ModFolder))
 	if err != nil {
 		return nil, err
 	}
 	var mods = []string{}
 	for _, v := range files {
-		if strings.HasSuffix(v, modExtension) {
+		if strings.HasSuffix(v, common.ModExtension) {
 			mods = append(mods, v)
 		}
 	}

@@ -68,7 +68,7 @@ or `%USER%/.discord.mods/core.js` on Windows, reads the contents and evals it.
 `core.js` is a GopherJS application which then executes all further code. It also sets
 up a namespace for public API functions; `dmodsNS`.
 
-Mods are loaded from `.discord.mdos/mods`, each `.dmod` file represents a mod which must
+Mods are loaded from `.discord.mods/mods`, each `.dmod` file represents a mod which must
 be accompanied by a folder named like the file without extension.
 
 Example; `24h-stamps.dmod` must put it's contents into `24h-stamps/`
