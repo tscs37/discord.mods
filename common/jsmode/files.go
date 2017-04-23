@@ -51,7 +51,7 @@ func WriteFile(file string, content []byte, mode int) error {
 			errChan <- err
 			return
 		}
-		fs.Call("writeFile", file, content, map[string]interface{}{
+		fs.Call("writeFile", file, string(content), map[string]interface{}{
 			"mode": mode,
 		}, callback)
 	}()

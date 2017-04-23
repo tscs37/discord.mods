@@ -27,7 +27,7 @@ func installMods(basepath string, box *rice.Box) error {
 			return errors.Wrap(err, "Could not open box file")
 		}
 		defer fileS.Close()
-		dst, err := os.OpenFile(filepath.Join(basepath, file), os.O_WRONLY|os.O_CREATE, 0644)
+		dst, err := os.OpenFile(filepath.Join(basepath, filepath.FromSlash(file)), os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
 			return errors.Wrap(err, "Could not open target file")
 		}

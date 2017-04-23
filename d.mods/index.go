@@ -34,20 +34,22 @@ func main() {
 	print("Loading local keyring")
 	config, err := loadConfig()
 	if err != nil {
-		print("Error loading keyring: ", err)
+		print("Error loading keyring: ", err.Error(), "\n", err)
 		common.Alert("Config is empty, using defaults!")
 		print("Continuing with empty keyring...")
 	}
 	err = saveConfig(config)
 	if err != nil {
-		print("Error writing keyring", err)
+		print("Error writing keyring", err.Error(), "\n", err)
 		return
+	} else {
+		print("Keywring Writeback OK.")
 	}
 	js.Global.Set("evalDModFile", common.EvalFile)
 
 	list, err := listMods()
 	if err != nil {
-		print("Error listing mods: ", err)
+		print("Error listing mods: ", err.Error(), "\n", err)
 		return
 	}
 	print("Found ", len(list), " mods")
@@ -55,13 +57,13 @@ func main() {
 	for _, v := range list {
 		mod, err := loadMod(v)
 		if err != nil {
-			print("Could not load mod '"+v+"': ", err)
+			print("Could not load mod '"+v+"': ", err.Error(), "\n", err)
 			continue
 		}
 		wg.Add(1)
 		go func() {
 			if err := evalMod(mod); err != nil {
-				print("ERR: ", err)
+				print("ERR: ", err.Error(), "\nERR: ", err)
 			}
 			wg.Done()
 		}()
