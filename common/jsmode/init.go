@@ -25,3 +25,7 @@ func Register() error {
 	common.GetModule = GetModule
 	return nil
 }
+
+var patchLevels = map[string]int{
+	"homedir": 1,
+}
