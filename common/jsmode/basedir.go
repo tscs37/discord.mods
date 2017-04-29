@@ -12,8 +12,9 @@ var global = func() *js.Object { return js.Global }
 func GetHome() (string, error) {
 	// We patch in a fix into the common code since the bootstrap.js
 	// function seems to be broken but an update is not required
-	dmodHomedirPatchlevel := dmod().Get("homedir_patch")
-	if dmodHomedirPatchlevel == js.Undefined || dmodHomedirPatchlevel.Int() < patchLevels["homedir"] {
+	dmodHomedirPatchlevel := dmod().Get("homedir_patch").Int()
+	if dmodHomedirPatchlevel < patchLevels["homedir"] {
+		println("Patching homedir() from patchlevel", dmodHomedirPatchlevel, "to", patchLevels["homedir"])
 		dmod().Set("homedir", func() string {
 			os, err := common.GetModule("os")
 			if err != nil {
