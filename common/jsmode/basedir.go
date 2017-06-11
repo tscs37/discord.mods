@@ -3,6 +3,7 @@ package jsmode
 import (
 	"github.com/gopherjs/gopherjs/js"
 	"go.rls.moe/misc/discord.mods/common"
+	"strings"
 )
 
 var dmod = func() *js.Object { return js.Global.Get("dmodsNS") }
@@ -26,4 +27,39 @@ func GetHome() (string, error) {
 		dmod().Set("homedir_patch", patchLevels["homedir"])
 	}
 	return dmod().Call("homedir").String(), nil
+}
+
+func OsPathSep() string {
+	seperator := "/"
+	proc, err := common.GetModule("process")
+	if err != nil {
+		Alert("Panic on JoinPath: " + err.Error())
+		panic(err)
+	}
+	if strings.HasPrefix(proc.Get("platform").String(), "win") {
+		seperator = "\\"
+	}
+	return seperator
+}
+
+func JoinPath(path ...string) string {
+	print("Joining path elements: ", path)
+	if len(path) == 0 {
+		return ""
+	}
+	if len(path) == 1 {
+		return path[0]
+	}
+	seperator := OsPathSep()
+	var stringRet = path[0]
+	path = path[1:]
+	for k := range path {
+		stringRet = stringRet + seperator + CleanPathElement(path[k])
+	}
+	return stringRet
+}
+
+func CleanPathElement(elem string) string {
+	sep := OsPathSep()
+	return strings.TrimSuffix(strings.TrimPrefix(elem, sep), sep)
 }

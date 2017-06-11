@@ -23,6 +23,7 @@ func Register() error {
 	common.EvalString = EvalString
 	common.EvalURL = EvalURL
 	common.GetModule = GetModule
+	common.JoinPath = JoinPath
 	return nil
 }
 

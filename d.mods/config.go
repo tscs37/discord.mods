@@ -8,13 +8,12 @@ import (
 	"gopkg.in/vmihailenco/msgpack.v2"
 	"gopkg.in/yaml.v2"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
 type config struct {
-	keymap map[string]key    `msgpack:"keymap"`
-	modmap map[string]string `msgpack:"modmap"`
+	Keymap map[string]key    `msgpack:"keymap"`
+	Modmap map[string]string `msgpack:"modmap"`
 }
 
 type mod struct {
@@ -49,7 +48,7 @@ func loadConfig() (*config, error) {
 	} else if err != nil {
 		return nil, err
 	}
-	cStr, err := common.GetFile(filepath.Join(base, common.ConfigFile))
+	cStr, err := common.GetFile(common.JoinPath(base, common.ConfigFile))
 	if err != nil {
 		return nil, err
 	}
@@ -70,12 +69,12 @@ func loadMod(modname string) (*mod, error) {
 	if err != nil {
 		return nil, err
 	}
-	if exists, err := common.Exists(filepath.Join(base, common.ModFolder)); !exists && err == nil {
+	if exists, err := common.Exists(common.JoinPath(base, common.ModFolder)); !exists && err == nil {
 		return nil, errors.New("Mod folder does not exist, check your setup")
 	} else if err != nil {
 		return nil, errors.Wrap(err, "Could not check if path exists")
 	}
-	cStr, err := common.GetFile(filepath.Join(base, common.ModFolder, modname))
+	cStr, err := common.GetFile(common.JoinPath(base, common.ModFolder, modname))
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +85,7 @@ func loadMod(modname string) (*mod, error) {
 	if err != nil {
 		return nil, err
 	}
-	mod.baseDir = strings.TrimSuffix(filepath.Join(base, common.ModFolder, modname), ".dmod")
+	mod.baseDir = strings.TrimSuffix(common.JoinPath(base, common.ModFolder, modname), ".dmod")
 	mod.baseName = modname
 	return mod, nil
 }
@@ -105,7 +104,7 @@ func saveConfig(c *config) error {
 		return errors.New("HOME path not set")
 	}
 	cStr := base64.RawStdEncoding.EncodeToString(cRaw)
-	return common.WriteFile(filepath.Join(base, common.ConfigFile), []byte(cStr), 0600)
+	return common.WriteFile(common.JoinPath(base, common.ConfigFile), []byte(cStr), 0600)
 }
 
 func listMods() ([]string, error) {
@@ -114,12 +113,12 @@ func listMods() ([]string, error) {
 		return nil, err
 	}
 
-	if exists, err := common.Exists(filepath.Join(base, common.ModFolder)); err != nil {
+	if exists, err := common.Exists(common.JoinPath(base, common.ModFolder)); err != nil {
 		return nil, err
 	} else if !exists {
-		return []string{}, common.Mkdir(filepath.Join(base, common.ModFolder), 0700)
+		return []string{}, common.Mkdir(common.JoinPath(base, common.ModFolder), 0700)
 	}
-	files, err := lsDir(filepath.Join(base, common.ModFolder))
+	files, err := lsDir(common.JoinPath(base, common.ModFolder))
 	if err != nil {
 		return nil, err
 	}

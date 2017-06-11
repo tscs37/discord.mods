@@ -1,6 +1,9 @@
 package osmode
 
-import "go.rls.moe/misc/discord.mods/common"
+import (
+	"go.rls.moe/misc/discord.mods/common"
+	"path/filepath"
+)
 
 func init() {
 	common.Must(Register())
@@ -16,5 +19,6 @@ func Register() error {
 	common.WriteFile = WriteFile
 	common.Mkdir = Mkdir
 	common.Exists = Exists
+	common.JoinPath = filepath.Join
 	return nil
 }

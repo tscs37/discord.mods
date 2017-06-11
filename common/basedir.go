@@ -15,6 +15,7 @@ const (
 )
 
 var GetHome func() (string, error)
+var JoinPath func(path ...string) string
 
 func GetBase() (string, error) {
 	home, err := GetHome()

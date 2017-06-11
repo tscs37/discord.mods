@@ -2,9 +2,8 @@ package main
 
 import (
 	"github.com/gopherjs/gopherjs/js"
-	"go.rls.moe/misc/discord.mods/common"
-	"path/filepath"
 	"github.com/pkg/errors"
+	"go.rls.moe/misc/discord.mods/common"
 )
 
 var dmods = js.Global.Get("dmodsNS")
@@ -63,8 +62,10 @@ func evalMod(modI *mod) error {
 				return errors.Wrap(err, "Could not eval pre-mod")
 			}
 		}
-		indexjsPath := filepath.Join(modI.baseDir, "index.js");
-		mainjsPath := filepath.Join(modI.baseDir, "main.js");
+		//indexjsPath := filepath.Join(modI.baseDir, "index.js");
+		//mainjsPath := filepath.Join(modI.baseDir, "main.js");
+		indexjsPath := common.JoinPath(modI.baseDir, "index.js")
+		mainjsPath := common.JoinPath(modI.baseDir, "main.js")
 		if exists, err := common.Exists(indexjsPath); exists && err == nil {
 			if err := common.RequireFile(modI.baseName, indexjsPath); err != nil {
 				return err
