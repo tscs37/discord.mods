@@ -1,50 +1,21 @@
 #!/bin/sh
-set -eu
-set -o pipefail
 
-# Verify we're in the installer director
-cd ./assets/ && cd ../.. && cd ./installer
+set -euo pipefail
 
-echo " * bootstrap.js"
-echo "   - Installing bootstrap.js"
-cp ./bootstrap.js ./assets/bootstrap.js
+. ./buildhelp.sh
 
-echo " * core.js "
-echo "   - Building core.js"
-cd ../d.mods/
-./rebuild.sh
-cd ../installer
-echo "   - Installing Core.js"
-cp ../d.mods/core.js ./assets/core.js
+beginBuild
 
-echo " * Discord.Mods API"
-echo "   - Building Discord.Mods API"
-cd ../d.mods.api
-./rebuild.sh
-cd ../installer
-echo "   - Installing Discord.Mods API"
-mkdir -p ./assets/mods/dmodsapi
-cp ../d.mods.api/dmodapi.js ./assets/mods/dmodsapi/index.js
-cp ../d.mods.api/dmodapi.dmod ./assets/mods/dmodsapi.dmod
+# Compile Core Assets
+jsInstall       "bootstrap.js"              bootstrap
+coreInstall     "core.js"                   core
+modGoInstall    "Discord.Mods API"          dmodsapi
 
-echo " * 24h Timestamps"
-echo "   - Installing 24h Timestamps"
-mkdir -p ./assets/mods/24h-stamps
-cp ../24h-stamps/index.js ./assets/mods/24h-stamps/index.js
-cp ../24h-stamps/24h-stamps.dmod ./assets/mods/24h-stamps.dmod
+# Install Additional Mods
+modJSInstall    "24h Timestamps"            24h-stamps
+modGoInstall    "Discord.Mods CSS Loader"   dcss
 
-echo " * Discord.Mods CSS Loader"
-echo "   - Building Discord.Mods CSS Loader"
-cd ../d.css
-./rebuild.sh
-cd ../installer
-echo "   - Installing Discord.Mods CSS Loader"
-mkdir -p ./assets/mods/dcss
-cp ../d.css/dcss.js ./assets/mods/dcss/index.js
-cp ../d.css/dcss.dmod ./assets/mods/dcss.dmod
+endBuild
 
-echo "Embedding Assets"
-rice embed-go -i .
-
-echo Building Binary
-go build
+embed
+finishBuild
