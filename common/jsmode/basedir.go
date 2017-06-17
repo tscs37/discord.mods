@@ -3,6 +3,7 @@ package jsmode
 import (
 	"github.com/gopherjs/gopherjs/js"
 	"go.rls.moe/misc/discord.mods/common"
+	"path/filepath"
 	"strings"
 )
 
@@ -51,15 +52,7 @@ func JoinPath(path ...string) string {
 		return path[0]
 	}
 	seperator := OsPathSep()
-	var stringRet = path[0]
-	path = path[1:]
-	for k := range path {
-		stringRet = stringRet + seperator + CleanPathElement(path[k])
-	}
+	filePathPre := filepath.Join(path...)
+	stringRet := strings.Replace(filePathPre, string(filepath.Separator), seperator, -1)
 	return stringRet
-}
-
-func CleanPathElement(elem string) string {
-	sep := OsPathSep()
-	return strings.TrimSuffix(strings.TrimPrefix(elem, sep), sep)
 }
