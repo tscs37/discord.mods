@@ -21,6 +21,12 @@
 			"revisionTime": "2017-03-13T23:49:21Z"
 		},
 		{
+			"checksumSHA1": "HmbftipkadrLlCfzzVQ+iFHbl6g=",
+			"path": "github.com/golang/glog",
+			"revision": "23def4e6c14b4da8ac2ed8007337bc5eb5007998",
+			"revisionTime": "2016-01-25T20:49:56Z"
+		},
+		{
 			"checksumSHA1": "kBeNcaKk56FguvPSUCEaH6AxpRc=",
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "2bba0603135d7d7f5cb73b2125beeda19c09f4ef",
@@ -31,6 +37,12 @@
 			"path": "github.com/layeh/asar",
 			"revision": "5e4d0891fe789f2da0c2d5afada3b6a1ede6d64c",
 			"revisionTime": "2016-12-24T16:31:00Z"
+		},
+		{
+			"checksumSHA1": "uxAGkaw3fZEQuJUaMbd26pHzcYw=",
+			"path": "github.com/monmohan/xferspdy",
+			"revision": "acb5bccb15002ed9352a46024de27a8f377400ba",
+			"revisionTime": "2016-08-20T16:49:52Z"
 		},
 		{
 			"checksumSHA1": "ynJSWoF6v+3zMnh9R0QmmG6iGV8=",
