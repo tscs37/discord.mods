@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -euo pipefail
+set -eu
 
 beginBuild() {
     echo "# 1/3 Building D.Mods"
