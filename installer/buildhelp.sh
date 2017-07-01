@@ -2,6 +2,10 @@
 
 set -eu
 
+mkBuildFolder() {
+    mkdir -p ./build
+}
+
 beginBuild() {
     echo "# 1/3 Building D.Mods"
 }
@@ -54,6 +58,8 @@ embed() {
 
 finishBuild() {
     echo "# 3/3 Building Installer"
-    go build -v
+    cd build
+    go build -v ..
+    cd ..
     echo "# 3/3 Finished Building Installer"
 }

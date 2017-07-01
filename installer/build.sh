@@ -4,6 +4,8 @@ set -eu
 
 . ./buildhelp.sh
 
+mkBuildFolder
+
 beginBuild
 
 # Compile Core Assets
@@ -18,4 +20,5 @@ modGoInstall    "Discord.Mods CSS Loader"   dcss
 endBuild
 
 embed
+
 finishBuild
