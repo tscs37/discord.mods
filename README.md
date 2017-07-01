@@ -1,5 +1,7 @@
 # Discord.Mods
 
+[![Build Status](https://travis-ci.org/tscs37/discord.mods.svg?branch=master)](https://travis-ci.org/tscs37/discord.mods)
+
 Discord.Mods is an unofficial modloader for Discord with a focus on reducing the
 modding surface in the client and offloading as much as possible into external code.
 
