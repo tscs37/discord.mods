@@ -1,0 +1,20 @@
+language: go
+go:
+- 1.8.x
+- 1.x.x
+- master
+matrix:
+  allow_failures:
+    - go: master
+env:
+- GOOS=linux GOARCH=amd64
+- GOOS=darwin GOARCH=amd64
+- GOOS=windows GOARCH=amd64
+go_import_path: go.rls.moe/misc/discord.mods
+install:
+- go get -u github.com/gopherjs/gopherjs
+- go get -u github.com/gopherjs/jquery
+- go get -u github.com/GeertJohan/go.rice
+- go get -u github.com/GeertJohan/go.rice/rice
+script:
+- ./test_and_build.sh
