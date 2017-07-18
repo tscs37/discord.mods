@@ -196,6 +196,9 @@ func findDiscordPath() (string, error) {
 	for {
 		bufin := bufio.NewReader(os.Stdin)
 		line, err := bufin.ReadString('\n')
+
+		line = strings.TrimRight(line, "\n")
+
 		if err != nil {
 			return "", errors.Wrap(err, "Error trying to read")
 		}
