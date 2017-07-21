@@ -54,9 +54,9 @@ embed() {
 
 finishBuild() {
     echo "# 3/3 Building Installer"
-    #export GOOS=${GOOS:=linux}
-    #export GOARCH=${GOARCH:=amd64}
-    echo "   - Building build/installer_${GOOS:=linux}_${GOARCH:=amd64}"
-    go build -v -o build/installer_${GOOS:=linux}_${GOARCH:=amd64}
+    export GOOS=$(go env GOOS)
+    export GOARCH=$(go env GOARCH)
+    echo "   - Building build/installer_${GOOS}_${GOARCH}"
+    go build -v -o build/installer_${GOOS}_${GOARCH}
     echo "# 3/3 Finished Building Installer"
 }
