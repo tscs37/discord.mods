@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/pkg/errors"
+	"io/ioutil"
 	"layeh.com/asar"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -18,83 +19,53 @@ func runIntAsar(path, bootstrapper string) error {
 
 	`)
 
-	file, err := os.Open(getResourcePath(path))
+	if err := unpackAsarInt(path, getResourcePath(path)); err != nil {
+		return errors.Wrap(err, "Could not unpack ASAR")
+	}
+
+	indexJsPath := filepath.Join(getResourcePath(path), "index.js")
+
+	stat, err := os.Stat(indexJsPath)
 	if err != nil {
-		return errors.Wrap(err, "Could not open ASAR")
+		return errors.Wrap(err, "COuld not stat index.js")
 	}
-	defer file.Close()
-
-	discordAsar, err := asar.Decode(file)
+	data, err := ioutil.ReadFile(indexJsPath)
 	if err != nil {
-		return errors.Wrap(err, "Could not decode ASAR")
+		return errors.Wrap(err, "Could not read index.js")
 	}
 
-	fmt.Println("Beginning install...")
-	for k := range discordAsar.Children {
-		file := discordAsar.Children[k]
-		if file.Path() == "index.js" {
-			oldIndexJsStr := file.String()
-			oldIndexJsStr, err = uninstall(oldIndexJsStr)
-			if err != nil {
-				return errors.Wrap(err, "Could not uninstall bootstrap.js")
-			}
-			newIndexJs, err := install(oldIndexJsStr, bootstrapper)
-			if err != nil {
-				return errors.Wrap(err, "Could not install bootstrap.js")
-			}
-			newEntry := asar.New("index.js", bytes.NewReader([]byte(newIndexJs)), int64(len(newIndexJs)), 0, file.Flags)
-			discordAsar.Children[k] = newEntry
-			break
-		}
-	}
-
-	outfile, err := os.Create("./output.asar")
+	newIndexJs, err := install(string(data), bootstrapper)
 	if err != nil {
-		return errors.Wrap(err, "Output file could not be created")
-	}
-	defer outfile.Close()
-
-	builder := &asar.Builder{}
-
-	err = discordAsar.Walk(func(file string, info os.FileInfo, err error) error {
-		recBuilder(discordAsar, builder, file, info, nil)
-		return nil
-	})
-	if err != nil {
-		return errors.Wrap(err, "Could not fully walk ASAR Contents")
+		return errors.Wrap(err, "Could not patch index.js")
 	}
 
-	_, err = builder.Root().EncodeTo(outfile)
-	if err != nil {
-		return errors.Wrap(err, "Could not encode ASAR")
+	if err := ioutil.WriteFile(indexJsPath, []byte(newIndexJs), stat.Mode()); err != nil {
+		return errors.Wrap(err, "Could not write index.js")
 	}
+
 	return nil
 }
 
-func recBuilder(entry *asar.Entry, builder *asar.Builder, file string, info os.FileInfo, content *string) {
-	fileSegs := strings.Split(file, "/")
-	recBuilderR(entry, builder, fileSegs, info, content)
-}
-
-func recBuilderR(entry *asar.Entry, builder *asar.Builder, file []string, info os.FileInfo, content *string) {
-	if len(file) == 0 {
-		return
+func unpackAsarInt(asarPath, target string) error {
+	file, err := os.Open(filepath.Join(getResourcePath(asarPath), "app.asar"))
+	if err != nil {
+		return errors.Wrap(err, "Could not open ASAR")
 	}
-	if len(file) == 1 {
-		if info.IsDir() {
-			builder.AddDir(file[0], asar.Flag(info.Mode()))
-			return
-		} else {
-			var cBytes = []byte{}
-			if content != nil {
-				cBytes = bytes.NewBufferString(*content).Bytes()
-			} else {
-				cBytes = entry.Find(file[0]).Bytes()
-			}
-			builder.Add(file[0], bytes.NewReader(cBytes), int64(len(cBytes)), asar.Flag(info.Mode()))
-			return
+	asarFile, err := asar.Decode(file)
+	if err != nil {
+		return errors.Wrap(err, "Could not decode ASAR")
+	}
+	return asarFile.Walk(func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
 		}
-	}
-	newBuilder := builder.AddDir(file[0], entry.Find(file[0]).Flags)
-	recBuilderR(entry.Find(file[0]), newBuilder, file[1:], info, content)
+		if info.IsDir() {
+			return os.MkdirAll(filepath.Join(target, path), info.Mode())
+		}
+		ent := asarFile.Find(strings.Split(path, "/")...)
+		if ent == nil {
+			return errors.Errorf("Could not find file %s in ASAR", path)
+		}
+		return ioutil.WriteFile(filepath.Join(target, path), ent.Bytes(), info.Mode())
+	})
 }

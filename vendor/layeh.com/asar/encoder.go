@@ -36,6 +36,7 @@ func (enc *entryEncoder) Encode(e *Entry) error {
 				enc.Header.WriteByte(',')
 			}
 			if !validFilename(child.Name) {
+				print("Panic on ", child.Name)
 				panic(errHeader)
 			}
 			enc.Write(child.Name)

@@ -5,9 +5,9 @@ modding surface in the client and offloading as much as possible into external c
 
 ## Installation
 
-Atm there is no stable node.js-free installer, only an experimental one.
+Currently, Discord.Mods uses the node.js ASAR utility to install by default, however, a node.js free binary is available that should be stable and functional.
 
-To install, simply compile the binary with Go of atleast version 1.8.
+To install, simply compile the binary with Go of atleast version 1.8 or download the latest release binary from the Releases Page
 
 Running the binary is simple;
 
@@ -20,7 +20,7 @@ The installer will attempt to autodetect most configurations and install itself.
 By default it uses the external ASAR engine, for this to work you need to have node.js with
 a compatible `asar` binary in your path. If you do not, the installation will fail safely.
 
-To use the internal engine use `--ext-asar=false`
+To use the internal engine use `--ext-asar=false`.
 
 ### Installing ASAR
 
