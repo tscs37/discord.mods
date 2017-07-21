@@ -20,7 +20,7 @@ var defaultDiscordPaths = []string{
 	"./discord",
 }
 
-var resourcePath = []string{"resources", "app.asar"}
+var resourcePath = []string{"resources"}
 
 const (
 	lookFor = "global.mainWindowId = mainWindow.id;"
@@ -165,19 +165,19 @@ func main() {
 `
 
 	if !hasBackupFile || *flagKillBackup {
-		err = copyFile("app.asar.old", getResourcePath(path))
+		err = copyFile("app.asar.old", filepath.Join(getResourcePath(path), "app.asar"))
 		if err != nil {
 			fmt.Printf("Could not backup old ASAR: %s\n", err)
-			fmt.Printf(failBanner, getResourcePath(path))
+			fmt.Printf(failBanner, filepath.Join(getResourcePath(path), "app.asar"))
 			return
 		}
 	} else {
 		fmt.Println("There already is a backup file, not making a new one...")
 	}
-	err = copyFile(getResourcePath(path), "output.asar")
+	err = copyFile(filepath.Join(getResourcePath(path), "app.asar"), "output.asar")
 	if err != nil {
 		fmt.Printf("Could not replace with new ASAR: %s\n", err)
-		fmt.Printf(failBanner, getResourcePath(path))
+		fmt.Printf(failBanner, filepath.Join(getResourcePath(path), "app.asar"))
 		return
 	}
 
@@ -192,10 +192,14 @@ func findDiscordPath() (string, error) {
 		return v, nil
 	}
 	fmt.Println("Could not find Discord Installation Path")
-	fmt.Print("Enter Path: >")
 	for {
+		fmt.Print("Enter Path: > ")
+
 		bufin := bufio.NewReader(os.Stdin)
 		line, err := bufin.ReadString('\n')
+
+		line = strings.TrimRight(line, "\n")
+
 		if err != nil {
 			return "", errors.Wrap(err, "Error trying to read")
 		}
@@ -245,7 +249,7 @@ func copyFile(dst, org string) error {
 		fmt.Println(">> PLEASE CHECK IF THE FILE IS CORRUPTED <<")
 		return errors.Wrap(err, "Truncate failed, File is corrupted")
 	}
-	_, err = dest.Seek(0, os.SEEK_SET)
+	_, err = dest.Seek(0, io.SeekStart)
 	if err != nil {
 		return errors.Wrap(err, "Could not seek start of file")
 	}

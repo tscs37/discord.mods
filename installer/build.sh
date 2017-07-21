@@ -12,8 +12,9 @@ coreInstall     "core.js"                   core
 modGoInstall    "Discord.Mods API"          dmodsapi
 
 # Install Additional Mods
-modJSInstall    "24h Timestamps"            24h-stamps
 modGoInstall    "Discord.Mods CSS Loader"   dcss
+# 24 hour Timestamps are Deprecated
+# modJSInstall    "24h Timestamps"            24h-stamps
 
 endBuild
 

@@ -17,7 +17,7 @@ func runExtAsar(path, bootstrapper string) error {
 
 	`)
 
-	tmp, err := unpackAsar(getResourcePath(path))
+	tmp, err := unpackAsar(filepath.Join(getResourcePath(path), "app.asar"))
 	if err != nil {
 		return errors.Wrap(err, "Unpacking failed")
 	}

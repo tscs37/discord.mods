@@ -1,15 +1,14 @@
 language: go
 go:
 - 1.8.x
-- 1.x.x
 - master
 matrix:
   allow_failures:
-    - go: master
+  - go: master
 env:
-- GOOS=linux GOARCH=amd64
-- GOOS=darwin GOARCH=amd64
-- GOOS=windows GOARCH=amd64
+- BUILD_GOOS=linux BUILD_GOARCH=amd64
+- BUILD_GOOS=darwin BUILD_GOARCH=amd64
+- BUILD_GOOS=windows BUILD_GOARCH=amd64
 go_import_path: go.rls.moe/misc/discord.mods
 install:
 - go get -u github.com/gopherjs/gopherjs
@@ -17,4 +16,15 @@ install:
 - go get -u github.com/GeertJohan/go.rice
 - go get -u github.com/GeertJohan/go.rice/rice
 script:
-- ./test_and_build.sh
+- GOARCH=$BUILD_GOARCH GOOS=$BUILD_GOOS ./test_and_build.sh
+deploy:
+  provider: releases
+  api_key:
+    secure: J2unF+A1iT10EBNNr3ITuIG5uvSIn8+tbXdnQhvcwRzRDKML3gdvD6LXwb6u3bUolx/smSkupbu80T06VTKZDYuDIfWfLF/F9A+LBVNtgsZJFQzRy0N2LXkmGEAeq5Ovay02SqZ/K7++/aDidWC/tFUTTIjYfa3ppZgYCwgi91oaqnLrEFcPYM3QocSG8assreIfV4HY7JxkDEH9w0bOK6ckbxHCZIri7p4n2tWy9JYLdmPT11OiKZtt56TF+f23nvPpqmgD3nPbm4+OKeu8Vs3k1/6gb8vphXIFD92AUCYzX70JLpDsYyAmCjUmmIbmYzJThinQk+9O91MggXxkSJYr2NsWwd7UupZ/Xt0MoUntOnGQiB8jdoaroj+MxB9Mvaiu7AkgHGsGKy6s73vhyE+bj3dsCzgPdQY2T+8SxX+nGPe29MRrXsIBbmJssk2aTcYJiFFNL0GAoVJK32pfQvd7fPlS44OQ6FabXXD05hT6/WEMHIhJ2c6vmXYtM4XtqU5bZdbsU0kkxG97L0G/znkqTPWkKEcKcLfzQ6z/9uJjdREchInadt7f/zMBxlX5hsh2FrrhUcvrwVULT9KRnR4CCfUBIbHt/6+9OK4XNrcYCaK0dufYcofbhMbSqq4vcdH6XtAk12Bbk/uyqCGyy45alr7sHkoOE2IShb1eCuw=
+  file_glob: true
+  file: installer/build/installer_*
+  skip_cleanup: true
+  on:
+    repo: tscs37/discord.mods
+    branch: 'master'
+    tags: true

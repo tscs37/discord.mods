@@ -33,10 +33,10 @@
 			"revisionTime": "2017-03-31T03:19:02Z"
 		},
 		{
-			"checksumSHA1": "J+eojDR9zKhCmtL/pj2LnuIsKa8=",
+			"checksumSHA1": "cz1/6EQJ0k46x+oY23P19LOVLkY=",
 			"path": "github.com/layeh/asar",
-			"revision": "5e4d0891fe789f2da0c2d5afada3b6a1ede6d64c",
-			"revisionTime": "2016-12-24T16:31:00Z"
+			"revision": "30a33f414d1f37b5345e203a29967e2bad9535dc",
+			"revisionTime": "2017-06-27T01:04:56Z"
 		},
 		{
 			"checksumSHA1": "uxAGkaw3fZEQuJUaMbd26pHzcYw=",
@@ -135,10 +135,10 @@
 			"revisionTime": "2017-04-07T17:21:22Z"
 		},
 		{
-			"checksumSHA1": "KVnq4dLZbPnjRS0bgoVrUVIsxeI=",
+			"checksumSHA1": "zledoqu1XOjdTG/Kms5qzdvvI4I=",
 			"path": "layeh.com/asar",
-			"revision": "5e4d0891fe789f2da0c2d5afada3b6a1ede6d64c",
-			"revisionTime": "2016-12-24T16:31:00Z"
+			"revision": "30a33f414d1f37b5345e203a29967e2bad9535dc",
+			"revisionTime": "2017-06-27T01:04:56Z"
 		}
 	],
 	"rootPath": "go.rls.moe/misc/discord.mods"
