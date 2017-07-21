@@ -192,10 +192,14 @@ func findDiscordPath() (string, error) {
 		return v, nil
 	}
 	fmt.Println("Could not find Discord Installation Path")
-	fmt.Print("Enter Path: >")
 	for {
+		fmt.Print("Enter Path: > ")
+
 		bufin := bufio.NewReader(os.Stdin)
 		line, err := bufin.ReadString('\n')
+
+		line = strings.TrimRight(line, "\n")
+
 		if err != nil {
 			return "", errors.Wrap(err, "Error trying to read")
 		}
