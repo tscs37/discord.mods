@@ -19,11 +19,19 @@ func runIntAsar(path, bootstrapper string) error {
 
 	`)
 
-	if err := unpackAsarInt(path, getResourcePath(path)); err != nil {
+	tstat, err := os.Stat(getResourcePath(path))
+	if err != nil {
+		return errors.Wrap(err, "Could not stat /resources/")
+	}
+	if err := os.Mkdir(filepath.Join(getResourcePath(path), "app"), tstat.Mode()); err != nil {
+		return errors.Wrap(err, "Could not create /resources/app/")
+	}
+
+	if err := unpackAsarInt(path, filepath.Join(getResourcePath(path), "app")); err != nil {
 		return errors.Wrap(err, "Could not unpack ASAR")
 	}
 
-	indexJsPath := filepath.Join(getResourcePath(path), "index.js")
+	indexJsPath := filepath.Join(getResourcePath(path), "app", "index.js")
 
 	stat, err := os.Stat(indexJsPath)
 	if err != nil {
@@ -43,6 +51,10 @@ func runIntAsar(path, bootstrapper string) error {
 		return errors.Wrap(err, "Could not write index.js")
 	}
 
+	if err := os.Rename(filepath.Join(getResourcePath(path), "app.asar"), filepath.Join(getResourcePath(path), "app.asar.bak")); err != nil {
+		return errors.Wrap(err, "Could not delete app.asar")
+	}
+
 	return nil
 }
 
@@ -51,6 +63,7 @@ func unpackAsarInt(asarPath, target string) error {
 	if err != nil {
 		return errors.Wrap(err, "Could not open ASAR")
 	}
+	defer file.Close()
 	asarFile, err := asar.Decode(file)
 	if err != nil {
 		return errors.Wrap(err, "Could not decode ASAR")
