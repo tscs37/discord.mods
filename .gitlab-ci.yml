@@ -1,0 +1,46 @@
+image: golang:1.8
+
+before_script:
+  - mkdir -p /go/src/go.rls.moe/misc
+  - ln -s /builds/rls-moe/discord.mods /go/src/go.rls.moe/misc/discord.mods
+  - cd /go/src/go.rls.moe/misc/discord.mods
+
+stages:
+- build
+
+compile-no-release:
+  stage: build
+  except:
+    - tags
+  script:
+      - go get -u github.com/gopherjs/gopherjs
+      - go get -u github.com/gopherjs/jquery
+      - go get -u github.com/GeertJohan/go.rice
+      - go get -u github.com/GeertJohan/go.rice/rice
+      - GOOS=linux ./build_all.sh
+      - GOOS=darwin ./build_all.sh
+      - GOOS=windows ./build_all.sh
+      - mv ./installer/build/installer_windows_amd64 ./installer/build/installer_windows_amd64.exe
+  artifacts:
+    name: "dev-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./installer/build/installer_*
+    expire_in: 1 week
+
+compile-release:
+  stage: build
+  only:
+    - tags
+  script:
+      - go get -u github.com/gopherjs/gopherjs
+      - go get -u github.com/gopherjs/jquery
+      - go get -u github.com/GeertJohan/go.rice
+      - go get -u github.com/GeertJohan/go.rice/rice
+      - GOOS=linux ./build_all.sh
+      - GOOS=darwin ./build_all.sh
+      - GOOS=windows ./build_all.sh
+      - mv ./installer/build/installer_windows_amd64 ./installer/build/installer_windows_amd64.exe
+  artifacts:
+    name: "discord.mods-$CI_COMMIT_REF_NAME"
+    paths:
+      - ./installer/build/installer_*
